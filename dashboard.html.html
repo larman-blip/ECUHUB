@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIAG-OS MAXISYS V4 | Professional OBD Diagnostics</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        /* Custom scrollbar for sidebar */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #06b6d4;
+        }
+    </style>
+</head>
+<body class="h-full flex overflow-hidden selection:bg-cyan-500 selection:text-slate-950">
+
+    <div class="flex w-full h-full">
+
+        <aside class="w-80 bg-slate-900 border-r border-slate-800 flex flex-col h-full shrink-0 z-20">
+            <div class="h-16 flex items-center justify-between px-5 border-b border-slate-800 bg-slate-950/60">
+                <div class="flex items-center space-x-2.5">
+                    <span class="relative flex h-3.5 w-3.5">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-cyan-500"></span>
+                    </span>
+                    <h1 class="text-lg font-bold tracking-wider text-white">DIAG-OS <span class="text-cyan-400 font-mono text-sm">MAXISYS</span></h1>
+                </div>
+                <span class="text-xs font-mono px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-400">V4.0</span>
+            </div>
+
+            <div class="p-4 border-b border-slate-800 bg-slate-900/40">
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <i class="fa-solid fa-magnifying-glass text-slate-500 text-sm"></i>
+                    </span>
+                    <input 
+                        type="text" 
+                        id="moduleSearch" 
+                        placeholder="Search modules..." 
+                        class="w-full bg-slate-950 border border-slate-700 text-slate-200 text-sm rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 block pl-10 pr-3.5 py-2 transition-all outline-none placeholder-slate-500"
+                        onkeyup="filterModules()"
+                    >
+                </div>
+            </div>
+
+            <nav class="flex-1 overflow-y-auto p-4 space-y-4" id="sidebarNav">
+                
+                <div class="border border-slate-800 rounded-lg overflow-hidden bg-slate-950/20 category-container" data-cat="actionneurs">
+                    <button onclick="toggleCategory('cat-actionneurs')" class="w-full flex items-center justify-between p-3.5 bg-slate-850 hover:bg-slate-800 transition-colors duration-200 text-left">
+                        <div class="flex items-center space-x-3">
+                            <i class="fa-solid fa-gears text-cyan-400"></i>
+                            <span class="font-semibold text-sm text-slate-200">Actionneurs</span>
+                        </div>
+                        <i id="arrow-cat-actionneurs" class="fa-solid fa-chevron-up text-slate-500 text-xs transition-transform duration-300"></i>
+                    </button>
+                    <div id="cat-actionneurs" class="transition-all duration-300 overflow-hidden max-h-[1000px]">
+                        <ul class="divide-y divide-slate-800/50 bg-slate-900/30">
+                            <li class="module-item" data-name="actuateur turbocompresseur">
+                                <button onclick="loadModule('actionneurs', 'actuateur_turbocompresseur.html')" class="w-full text-left px-4 py-2.5 hover:bg-slate-800/40 text-xs transition-all flex items-start space-x-2 border-l-2 border-transparent hover:border-cyan-500">
+                                    <i class="fa-solid fa-cube text-slate-500 mt-0.5"></i>
+                                    <span class="text-slate-300 hover:text-white">Actuateur Turbocompresseur</span>
+                                </button>
+                            </li>
+                            <li class="module-item" data-name="diagnostic alternateur multi architecture">
+                                <button onclick="loadModule('actionneurs', 'diagnostic_alternateur_multi_architecture.html')" class="w-full text-left px-4 py-2.5 hover:bg-slate-800/40 text-xs transition-all flex items-start space-x-2 border-l-2 border-transparent hover:border-cyan-500">
+                                    <i class="fa-solid fa-cube text-slate-500 mt-0.5"></i>
+                                    <span class="text-slate-300 hover:text-white">Diagnostic Alternateur Multi-Architecture</span>
+                                </button>
+                            </li>
+                            <li class="module-item" data-name="diagnostic injecteurs common rail">
+                                <button onclick="loadModule('actionneurs', 'diagnostic_injecteurs_common_rail.html')" class="w-full text-left px-4 py-2.5 hover:bg-slate-800/40 text-xs transition-all flex items-start space-x-2 border-l-2 border-transparent hover:border-cyan-500">
+                                    <i class="fa-solid fa-cube text-slate-500 mt-0.5"></i>
+                                    <span class="text-slate-300 hover:text-white">Diagnostic Injecteurs Common Rail</span>
+                                </button>
+                            </li>
+                            <li class="module-item" data-name="interactive injecteur diagnostic module">
+                                <button onclick="loadModule('actionneurs', 'interactive_injecteur_diagnostic_module.html')" class="w-full text-left px-4 py-2.5 hover:bg-slate-800/40 text-xs transition-all flex items-start space-x-2 border-l-2 border-transparent hover:border-cyan-500">
+                                    <i class="fa-solid fa-cube text-slate-500 mt-0.5"></i>
+                                    <span class="text-slate-300 hover:text-white">Interactive Injecteur Diagnostic Module</span>
+                                </button>
+                            </li>
+                            <li class="module-item" data-name="interactive actuateur diagnostic module">
+                                <button onclick="loadModule('actionneurs', 'interactive_actuateur_diagnostic_module.html')" class="w-full text-left px-4 py-2.5 hover:bg-slate-800/40 text-xs transition-all flex items-start space-x-2 border-l-2 border-transparent hover:border-cyan-500">
+                                    <i class="fa-solid fa-cube text-slate-500 mt-0.5"></i>
+                                    <span class="text-slate-300 hover:text-white">Interactive Actuateur Diagnostic Module</span>
+                                </button>
+                            </li>
+                            <li class="module-item" data-name="interactive papillon diagnostic module">
+                                <button onclick="loadModule('actionneurs', 'interactive_papillon_diagnostic_module.html')" class="w-full text-left px-4 py-2.5 hover:bg-slate-800/40 text-xs transition-all flex items-start space-x-2 border-l-2 border-transparent hover:border-cyan-500">
+                                    <i class="fa-solid fa-cube text-slate-500 mt-0.5"></i>
+                                    <span class="text-slate-300 hover:text-white">Interactive Papillon Diagnostic Module</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="border border-slate-800 rounded-lg overflow-hidden bg-slate-950/20 category-container" data-cat="capteurs">
+                    <button onclick="toggleCategory('cat-capteurs')" class="w-full flex items-center justify-between p-3.5 bg-slate-850 hover:bg-slate-800 transition-colors duration-200 text-left">
+                        <div class="flex items-center space-x-3">
+                            <i class="fa-solid fa-microchip text-yellow-500"></i>
+                            <span class="font-semibold text-sm text-slate-200">Capteurs</span>
+                        </div>
+                        <i id="arrow-cat-capteurs" class="fa-solid fa-chevron-up text-slate-500 text-xs transition-transform duration-300"></i>
+                    </button>
+                    <div id="cat-capteurs" class="transition-all duration-300 overflow-hidden max-h-[1000px]">
+                        <ul class="divide-y divide-slate-800/50 bg-slate-900/30">
+                            <li class="module-item" data-name="interactive maf diagnostic module">
+                                <button onclick="loadModule('capteurs', 'interactive_maf_diagnostic_module.html')" class="w-full text-left px-4 py-2.5 hover:bg-slate-800/40 text-xs transition-all flex items-start space-x-2 border-l-2 border-transparent hover:border-cyan-500">
+                                    <i class="fa-solid fa-satellite-dish text-slate-500 mt-0.5"></i>
+                                    <span class="text-slate-300 hover:text-white">Interactive MAF Diagnostic Module</span>
+                                </button>
+                            </li>
+                            <li class="module-item" data-name="module technique capteur maf con deep diag">
+                                <button onclick="loadModule('capteurs', 'module_technique_capteur_maf_con_deep_diag.html')" class="w-full text-left px-4 py-2.5 hover:bg-slate-800/40 text-xs transition-all flex items-start space-x-2 border-l-2 border-transparent hover:border-cyan-500">
+                                    <i class="fa-solid fa-satellite-dish text-slate-500 mt-0.5"></i>
+                                    <span class="text-slate-300 hover:text-white">Technique Capteur MAF Con Deep Diag</span>
+                                </button>
+                            </li>
+                            <li class="module-item" data-name="interactive map diagnostic module">
+                                <button onclick="loadModule('capteurs', 'interactive_map_diagnostic_module.html')" class="w-full text-left px-4 py-2.5 hover:bg-slate-800/40 text-xs transition-all flex items-start space-x-2 border-l-2 border-transparent hover:border-cyan-500">
+                                    <i class="fa-solid fa-satellite-dish text-slate-500 mt-0.5"></i>
+                                    <span class="text-slate-300 hover:text-white">Interactive MAP Diagnostic Module</span>
+                                </button>
+                            </li>
+                            <li class="module-item" data-name="interactive rail pressure diagnostic module">
+                                <button onclick="loadModule('capteurs', 'interactive_rail_pressure_diagnostic_module.html')" class="w-full text-left px-4 py-2.5 hover:bg-slate-800/40 text-xs transition-all flex items-start space-x-2 border-l-2 border-transparent hover:border-cyan-500">
+                                    <i class="fa-solid fa-satellite-dish text-slate-500 mt-0.5"></i>
+                                    <span class="text-slate-300 hover:text-white">Interactive Rail Pressure Diagnostic Module</span>
+                                </button>
+                            </li>
+                            <li class="module-item" data-name="interactive pmh diagnostic module">
+                                <button onclick="loadModule('capteurs', 'interactive_pmh_diagnostic_module.html')" class="w-full text-left px-4 py-2.5 hover:bg-slate-800/40 text-xs transition-all flex items-start space-x-2 border-l-2 border-transparent hover:border-cyan-500">
+                                    <i class="fa-solid fa-satellite-dish text-slate-500 mt-0.5"></i>
+                                    <span class="text-slate-300 hover:text-white">Interactive PMH Diagnostic Module</span>
+                                </button>
+                            </li>
+                            <li class="module-item" data-name="module diagnostic pmh">
+                                <button onclick="loadModule('capteurs', 'module_diagnostic_pmh.html')" class="w-full text-left px-4 py-2.5 hover:bg-slate-800/40 text-xs transition-all flex items-start space-x-2 border-l-2 border-transparent hover:border-cyan-500">
+                                    <i class="fa-solid fa-satellite-dish text-slate-500 mt-0.5"></i>
+                                    <span class="text-slate-300 hover:text-white">Module Diagnostic PMH</span>
+                                </button>
+                            </li>
+                            <li class="module-item" data-name="interactive aac diagnostic module">
+                                <button onclick="loadModule('capteurs', 'interactive_aac_diagnostic_module.html')" class="w-full text-left px-4 py-2.5 hover:bg-slate-800/40 text-xs transition-all flex items-start space-x-2 border-l-2 border-transparent hover:border-cyan-500">
+                                    <i class="fa-solid fa-satellite-dish text-slate-500 mt-0.5"></i>
+                                    <span class="text-slate-300 hover:text-white">Interactive AAC Diagnostic Module</span>
+                                </button>
+                            </li>
+                            <li class="module-item" data-name="interactive ect diagnostic module">
+                                <button onclick="loadModule('capteurs', 'interactive_ect_diagnostic_module.html')" class="w-full text-left px-4 py-2.5 hover:bg-slate-800/40 text-xs transition-all flex items-start space-x-2 border-l-2 border-transparent hover:border-cyan-500">
+                                    <i class="fa-solid fa-satellite-dish text-slate-500 mt-0.5"></i>
+                                    <span class="text-slate-300 hover:text-white">Interactive ECT Diagnostic Module</span>
+                                </button>
+                            </li>
+                            <li class="module-item" data-name="interactive lambda diagnostic module">
+                                <button onclick="loadModule('capteurs', 'interactive_lambda_diagnostic_module.html')" class="w-full text-left px-4 py-2.5 hover:bg-slate-800/40 text-xs transition-all flex items-start space-x-2 border-l-2 border-transparent hover:border-cyan-500">
+                                    <i class="fa-solid fa-satellite-dish text-slate-500 mt-0.5"></i>
+                                    <span class="text-slate-300 hover:text-white">Interactive Lambda Diagnostic Module</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="border border-slate-800 rounded-lg overflow-hidden bg-slate-950/20 category-container" data-cat="antipollution">
+                    <button onclick="toggleCategory('cat-antipollution')" class="w-full flex items-center justify-between p-3.5 bg-slate-850 hover:bg-slate-800 transition-colors duration-200 text-left">
+                        <div class="flex items-center space-x-3">
+                            <i class="fa-solid fa-leaf text-emerald-400"></i>
+                            <span class="font-semibold text-sm text-slate-200">Anti-pollution</span>
+                        </div>
+                        <i id="arrow-cat-antipollution" class="fa-solid fa-chevron-up text-slate-500 text-xs transition-transform duration-300"></i>
+                    </button>
+                    <div id="cat-antipollution" class="transition-all duration-300 overflow-hidden max-h-[1000px]">
+                        <ul class="divide-y divide-slate-800/50 bg-slate-900/30">
+                            <li class="module-item" data-name="interactive egr diagnostic module">
+                                <button onclick="loadModule('antipollution', 'interactive_egr_diagnostic_module.html')" class="w-full text-left px-4 py-2.5 hover:bg-slate-800/40 text-xs transition-all flex items-start space-x-2 border-l-2 border-transparent hover:border-cyan-500">
+                                    <i class="fa-solid fa-smog text-slate-500 mt-0.5"></i>
+                                    <span class="text-slate-300 hover:text-white">Interactive EGR Diagnostic Module</span>
+                                </button>
+                            </li>
+                            <li class="module-item" data-name="interactive fap diagnostic module">
+                                <button onclick="loadModule('antipollution', 'interactive_fap_diagnostic_module.html')" class="w-full text-left px-4 py-2.5 hover:bg-slate-800/40 text-xs transition-all flex items-start space-x-2 border-l-2 border-transparent hover:border-cyan-500">
+                                    <i class="fa-solid fa-smog text-slate-500 mt-0.5"></i>
+                                    <span class="text-slate-300 hover:text-white">Interactive FAP Diagnostic Module</span>
+                                </button>
+                            </li>
+                            <li class="module-item" data-name="systeme adblue">
+                                <button onclick="loadModule('antipollution', 'syst_me_adblue.html')" class="w-full text-left px-4 py-2.5 hover:bg-slate-800/40 text-xs transition-all flex items-start space-x-2 border-l-2 border-transparent hover:border-cyan-500">
+                                    <i class="fa-solid fa-smog text-slate-500 mt-0.5"></i>
+                                    <span class="text-slate-300 hover:text-white">Système AdBlue</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </nav>
+
+            <div class="p-4 border-t border-slate-800 bg-slate-950/60 flex items-center justify-between text-xs font-mono text-slate-500">
+                <span class="flex items-center"><i class="fa-solid fa-circle text-emerald-500 text-[8px] mr-1.5 animate-pulse"></i> OBD LINK CONNECTED</span>
+                <span>LTE v4G</span>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col h-full bg-slate-950 relative">
+            
+            <header class="h-16 flex items-center justify-between px-6 border-b border-slate-800 bg-slate-900/60 backdrop-blur-md z-10">
+                <div class="flex items-center space-x-3">
+                    <button onclick="closeModule()" class="flex items-center space-x-2 text-slate-400 hover:text-white px-3 py-1.5 rounded-lg hover:bg-slate-800 transition-colors">
+                        <i class="fa-solid fa-house"></i>
+                        <span class="text-xs font-mono">HOME</span>
+                    </button>
+                    <span class="text-slate-700">|</span>
+                    <div id="headerTitle" class="text-slate-300 font-semibold tracking-wide text-sm">ECU LIVE TELEMETRY STREAM</div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="bg-slate-950/80 px-3.5 py-1.5 rounded-lg border border-slate-800 flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                        <span class="text-xs font-mono font-bold text-slate-300" id="liveVoltage">14.1 V</span>
+                    </div>
+                    <div class="bg-slate-950/80 px-3.5 py-1.5 rounded-lg border border-slate-800 flex items-center space-x-2">
+                        <i class="fa-solid fa-temperature-three-quarters text-amber-500 text-xs"></i>
+                        <span class="text-xs font-mono font-bold text-slate-300" id="liveTemp">88°C</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="flex-1 relative overflow-hidden" id="viewportArea">
+                
+                <div id="ecuDashboard" class="absolute inset-0 overflow-y-auto p-6 md:p-8 flex flex-col justify-between">
+                    
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <h2 class="text-xl font-bold tracking-wider text-white">LIVE ENGINE EMULATION CORE</h2>
+                            <p class="text-xs text-slate-500 font-mono mt-1">SIMULATING LIVE CAN-BUS OBD SENSOR PACKETS (50HZ)</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <span class="text-[10px] font-mono border border-cyan-500/30 text-cyan-400 bg-cyan-950/50 px-2 py-1 rounded">FAST TELEMETRY</span>
+                            <span class="text-[10px] font-mono border border-emerald-500/30 text-emerald-400 bg-emerald-950/50 px-2 py-1 rounded">DTC CLEAN</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 flex-1 items-center">
+                        
+                        <div class="bg-slate-900/40 border border-slate-800/80 p-5 rounded-xl flex flex-col items-center justify-center relative shadow-lg">
+                            <div class="absolute top-3 left-4 text-[10px] font-mono text-slate-500">ENGINE SPEED</div>
+                            <div class="w-48 h-48 relative">
+                                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="40" stroke="#1e293b" stroke-width="6" fill="none" stroke-dasharray="188 250" stroke-linecap="round"/>
+                                    <circle id="rpmTrack" cx="50" cy="50" r="40" stroke="#f59e0b" stroke-width="6.5" fill="none" stroke-dasharray="0 250" stroke-linecap="round" class="transition-all duration-75"/>
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center pt-2">
+                                    <span id="rpmValue" class="text-3xl font-extrabold font-mono text-amber-500">2,350</span>
+                                    <span class="text-[10px] font-mono text-slate-400 tracking-widest mt-0.5">TR/MIN x1000</span>
+                                </div>
+                            </div>
+                            <div class="w-full flex justify-between text-[10px] font-mono text-slate-500 px-4 mt-2">
+                                <span>0 RPM</span>
+                                <span class="text-red-500">REDLINE 8K</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900/60 border-2 border-slate-800/90 p-6 rounded-2xl flex flex-col items-center justify-center relative shadow-2xl scale-105 z-10">
+                            <div class="absolute top-4 left-5 text-[10px] font-mono text-slate-400 flex items-center">
+                                <span class="w-2 h-2 rounded-full bg-cyan-400 mr-2 animate-pulse"></span>ACTIVE VEHICLE ROAD SPEED
+                            </div>
+                            
+                            <div class="w-64 h-64 relative">
+                                <svg class="w-full h-full transform -rotate-225" viewBox="0 0 120 120">
+                                    <circle cx="60" cy="60" r="50" stroke="#0f172a" stroke-width="8" fill="none"/>
+                                    <circle cx="60" cy="60" r="48" stroke="#1e293b" stroke-width="1.5" fill="none" stroke-dasharray="4 2"/>
+                                    <circle id="speedArc" cx="60" cy="60" r="48" stroke="url(#cyanGrad)" stroke-width="6" fill="none" stroke-dasharray="0 314" class="transition-all duration-75"/>
+                                    
+                                    <defs>
+                                        <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" stop-color="#06b6d4" />
+                                            <stop offset="100%" stop-color="#3b82f6" />
+                                        </linearGradient>
+                                    </defs>
+
+                                    <g id="speedNeedle" transform="rotate(0, 60, 60)" class="transition-all duration-75">
+                                        <line x1="60" y1="60" x2="60" y2="15" stroke="#22d3ee" stroke-width="2.5" stroke-linecap="round"/>
+                                        <circle cx="60" cy="60" r="5" fill="#06b6d4" stroke="#ffffff" stroke-width="1"/>
+                                    </g>
+                                </svg>
+                                
+                                <div class="absolute inset-0 flex flex-col items-center justify-center pt-8">
+                                    <span id="speedValue" class="text-5xl font-extrabold font-mono tracking-tight text-white">92</span>
+                                    <span class="text-xs font-semibold tracking-wider text-cyan-400 mt-1">KM / H</span>
+                                    <div class="mt-2.5 px-3 py-1 rounded bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300">
+                                        GEAR: <span id="gearValue" class="font-bold text-cyan-400">D3</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="w-full flex justify-between text-[10px] font-mono text-slate-400 px-6 mt-3">
+                                <span>0 KM/H</span>
+                                <span>120</span>
+                                <span>240 KM/H</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900/40 border border-slate-800/80 p-5 rounded-xl flex flex-col items-center justify-center relative shadow-lg">
+                            <div class="absolute top-3 left-4 text-[10px] font-mono text-slate-500">INDUCTION MANIFOLD</div>
+                            <div class="w-48 h-48 relative">
+                                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="40" stroke="#1e293b" stroke-width="6" fill="none" stroke-dasharray="188 250" stroke-linecap="round"/>
+                                    <circle id="boostTrack" cx="50" cy="50" r="40" stroke="#10b981" stroke-width="6.5" fill="none" stroke-dasharray="0 250" stroke-linecap="round" class="transition-all duration-75"/>
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center pt-2">
+                                    <span id="boostValue" class="text-3xl font-extrabold font-mono text-emerald-400">1.8</span>
+                                    <span class="text-[10px] font-mono text-slate-400 tracking-widest mt-0.5">TURBO PRESSURE</span>
+                                </div>
+                            </div>
+                            <div class="w-full flex justify-between text-[10px] font-mono text-slate-500 px-4 mt-2">
+                                <span>0.0 BAR</span>
+                                <span>MAX 3.0 BAR</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-auto">
+                        
+                        <div class="bg-slate-900/30 border border-slate-800/60 p-4 rounded-xl flex items-center justify-between">
+                            <div>
+                                <div class="text-[10px] font-mono text-slate-500 uppercase">Throttle Pedal Position</div>
+                                <div class="text-xl font-bold font-mono text-white mt-1" id="valThrottle">42 %</div>
+                            </div>
+                            <div class="w-10 h-10 rounded-lg bg-cyan-950/30 border border-cyan-800/30 flex items-center justify-center">
+                                <i class="fa-solid fa-gauge-high text-cyan-400 text-sm"></i>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900/30 border border-slate-800/60 p-4 rounded-xl flex items-center justify-between">
+                            <div>
+                                <div class="text-[10px] font-mono text-slate-500 uppercase">Engine Coolant Temp</div>
+                                <div class="text-xl font-bold font-mono text-white mt-1" id="valCoolant">88 °C</div>
+                            </div>
+                            <div class="w-10 h-10 rounded-lg bg-orange-950/30 border border-orange-850/30 flex items-center justify-center">
+                                <i class="fa-solid fa-temperature-empty text-orange-400 text-sm"></i>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900/30 border border-slate-800/60 p-4 rounded-xl flex items-center justify-between">
+                            <div>
+                                <div class="text-[10px] font-mono text-slate-500 uppercase">Battery Static Charge</div>
+                                <div class="text-xl font-bold font-mono text-white mt-1" id="valBattery">14.1 V</div>
+                            </div>
+                            <div class="w-10 h-10 rounded-lg bg-blue-950/30 border border-blue-800/30 flex items-center justify-center">
+                                <i class="fa-solid fa-car-battery text-blue-400 text-sm"></i>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900/30 border border-slate-800/60 p-4 rounded-xl flex items-center justify-between">
+                            <div>
+                                <div class="text-[10px] font-mono text-slate-500 uppercase">Active DTC Faults</div>
+                                <div class="text-xl font-bold font-mono text-emerald-400 mt-1">NO_FAULT</div>
+                            </div>
+                            <div class="w-10 h-10 rounded-lg bg-emerald-950/30 border border-emerald-800/30 flex items-center justify-center">
+                                <i class="fa-solid fa-shield-halved text-emerald-400 text-sm"></i>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div id="moduleLoader" class="hidden absolute inset-0 bg-slate-950/90 z-40 flex flex-col items-center justify-center">
+                    <div class="relative w-20 h-20">
+                        <div class="absolute inset-0 rounded-full border-4 border-slate-800"></div>
+                        <div class="absolute inset-0 rounded-full border-4 border-t-cyan-500 animate-spin"></div>
+                    </div>
+                    <span class="text-sm font-mono text-cyan-400 tracking-wider mt-5 animate-pulse">ESTABLISHING MODULE INTERLINK...</span>
+                </div>
+
+                <iframe 
+                    id="viewportIframe"
+                    class="hidden w-full h-full border-none bg-white"
+                    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-downloads"
+                    title="Live Diagnostic Viewport"
+                ></iframe>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        /* -------------------------------------------------------------
+           1. COMPREHENSIVE CATEGORY FOLDING/COLLAPSE FUNCTION
+        ------------------------------------------------------------- */
+        function toggleCategory(categoryId) {
+            const container = document.getElementById(categoryId);
+            const arrow = document.getElementById('arrow-' + categoryId);
+            if (container.classList.contains('max-h-0')) {
+                container.classList.remove('max-h-0');
+                container.classList.add('max-h-[1000px]');
+                arrow.classList.remove('rotate-180');
+            } else {
+                container.classList.add('max-h-0');
+                container.classList.remove('max-h-[1000px]');
+                arrow.classList.add('rotate-180');
+            }
+        }
+
+        /* -------------------------------------------------------------
+           2. LIVE VANILLA SEARCH/FILTER THROUGH ALL 18 SPECIFIC MODULES
+        ------------------------------------------------------------- */
+        function filterModules() {
+            const query = document.getElementById('moduleSearch').value.toLowerCase().trim();
+            const categories = document.querySelectorAll('.category-container');
+            
+            categories.forEach(category => {
+                const modules = category.querySelectorAll('.module-item');
+                let visibleCount = 0;
+                
+                modules.forEach(module => {
+                    const name = module.getAttribute('data-name');
+                    if (name.includes(query)) {
+                        module.style.display = 'block';
+                        visibleCount++;
+                    } else {
+                        module.style.display = 'none';
+                    }
+                });
+                
+                // Show/hide parent categories dynamically based on query results
+                if (visibleCount > 0) {
+                    category.style.display = 'block';
+                    // Auto-expand search-matching categories
+                    const catId = 'cat-' + category.getAttribute('data-cat');
+                    const targetDiv = document.getElementById(catId);
+                    const arrow = document.getElementById('arrow-' + catId);
+                    targetDiv.classList.remove('max-h-0');
+                    targetDiv.classList.add('max-h-[1000px]');
+                    arrow.classList.remove('rotate-180');
+                } else {
+                    category.style.display = 'none';
+                }
+            });
+        }
+
+        /* -------------------------------------------------------------
+           3. REALTIME ECU ENGINE SIMULATOR SYSTEM (50HZ LOOP)
+        ------------------------------------------------------------- */
+        let state = {
+            rpm: 800,
+            speed: 0,
+            gear: 1,
+            throttle: 15,
+            boost: 0.1,
+            coolant: 85,
+            voltage: 14.1,
+            time: 0
+        };
+
+        const rpmTrack = document.getElementById('rpmTrack');
+        const rpmValue = document.getElementById('rpmValue');
+        const speedArc = document.getElementById('speedArc');
+        const speedValue = document.getElementById('speedValue');
+        const speedNeedle = document.getElementById('speedNeedle');
+        const gearValue = document.getElementById('gearValue');
+        const boostTrack = document.getElementById('boostTrack');
+        const boostValue = document.getElementById('boostValue');
+        const valThrottle = document.getElementById('valThrottle');
+        const valCoolant = document.getElementById('valCoolant');
+        const valBattery = document.getElementById('valBattery');
+        const liveVoltage = document.getElementById('liveVoltage');
+        const liveTemp = document.getElementById('liveTemp');
+
+        function runPowertrainEmulation() {
+            state.time += 0.02; // Increment simulation loop time increment
+
+            // Generate fluctuating throttle curves mimicking acceleration profiles
+            let phase = (state.time % 20); // 20-second recurring journey
+            if (phase < 3) {
+                // Hard acceleration
+                state.throttle = Math.min(95, state.throttle + 4);
+            } else if (phase < 8) {
+                // Cruise / Soft climb
+                state.throttle = 60 + Math.sin(state.time * 2) * 5;
+            } else if (phase < 11) {
+                // Deceleration
+                state.throttle = Math.max(10, state.throttle - 5);
+            } else if (phase < 15) {
+                // Strong throttle pull
+                state.throttle = Math.min(85, state.throttle + 6);
+            } else {
+                // Return to idle
+                state.throttle = Math.max(12, state.throttle - 3);
+            }
+
+            // Simulate target dynamic RPM based on throttle inputs
+            let targetRpm = 800 + (state.throttle / 100) * 6200;
+            
+            // Simulating gear shifts
+            if (state.rpm > 6500 && state.gear < 6) {
+                // Shift UP action
+                state.gear++;
+                state.rpm -= 2800; // Instant drop of engine RPM
+                state.boost = 0.1; // Pressure dump-valve release!
+            } else if (state.rpm < 2000 && state.gear > 1) {
+                // Shift DOWN action
+                state.gear--;
+                state.rpm += 1500;
+            } else {
+                // Regular dynamic approach to target RPM
+                state.rpm += (targetRpm - state.rpm) * 0.12;
+            }
+
+            // Calculate Speed based on Gear + RPM + ratio
+            let gearRatios = [0, 0.015, 0.028, 0.042, 0.058, 0.075, 0.092];
+            let targetSpeed = state.rpm * gearRatios[state.gear];
+            state.speed += (targetSpeed - state.speed) * 0.08;
+
+            // Turbo boost spools based on RPM and throttle load
+            let targetBoost = (state.throttle / 100) * 2.2 + (state.rpm / 8000) * 0.8;
+            state.boost += (targetBoost - state.boost) * 0.15;
+
+            // Micro fluctuations to other sensor channels
+            state.coolant = 88 + Math.sin(state.time * 0.1) * 1.5;
+            state.voltage = 13.9 + Math.random() * 0.3;
+
+            // --- RENDER REVOLUTIONARY GAUGES ---
+            
+            // RPM Gauge (Dash-array limit: 188 degrees of total 250)
+            let rpmPct = Math.min(1, state.rpm / 8000);
+            let rpmDashArray = (rpmPct * 188) + " 250";
+            rpmTrack.setAttribute('stroke-dasharray', rpmDashArray);
+            rpmValue.textContent = Math.round(state.rpm).toLocaleString();
+
+            // Speedometer Arc Color & Needle Rotation
+            let speedPct = Math.min(1, state.speed / 240);
+            let speedDashArray = (speedPct * 188) + " 314"; // 188 active dash length
+            speedArc.setAttribute('stroke-dasharray', speedDashArray);
+            
+            // Map speed to degrees. Dial sweeps from -225 to +45. Range is 270 degrees.
+            let needleRotation = -135 + (speedPct * 270);
+            speedNeedle.setAttribute('transform', 'rotate(' + needleRotation + ', 60, 60)');
+            speedValue.textContent = Math.round(state.speed);
+            gearValue.textContent = "D" + state.gear;
+
+            // Turbo Boost Gauge render
+            let boostPct = Math.min(1, state.boost / 3.0);
+            let boostDashArray = (boostPct * 188) + " 250";
+            boostTrack.setAttribute('stroke-dasharray', boostDashArray);
+            boostValue.textContent = state.boost.toFixed(2);
+
+            // Dashboard Grid Data Fields update
+            valThrottle.textContent = Math.round(state.throttle) + " %";
+            valCoolant.textContent = state.coolant.toFixed(1) + " °C";
+            valBattery.textContent = state.voltage.toFixed(1) + " V";
+            liveVoltage.textContent = state.voltage.toFixed(1) + " V";
+            liveTemp.textContent = Math.round(state.coolant) + "°C";
+        }
+
+        // Initialize simulation running at 50Hz (20ms interval)
+        let simulationInterval = setInterval(runPowertrainEmulation, 20);
+
+        /* -------------------------------------------------------------
+           4. DYNAMIC MODULE FILE LOADER CORE
+        ------------------------------------------------------------- */
+        function loadModule(category, fileName) {
+            const ecuDashboard = document.getElementById('ecuDashboard');
+            const viewportIframe = document.getElementById('viewportIframe');
+            const loader = document.getElementById('moduleLoader');
+            const headerTitle = document.getElementById('headerTitle');
+
+            // Pause live SVG dashboard processing engine to save resources inside active iframe
+            clearInterval(simulationInterval);
+
+            // Show intermediate connection overlay
+            loader.classList.remove('hidden');
+            ecuDashboard.classList.add('hidden');
+            viewportIframe.classList.add('hidden');
+
+            // Format UI header trace text
+            headerTitle.textContent = "ACTIVE VIEWPORT: " + category.toUpperCase() + " / " + fileName.replace(/_/g, ' ').toUpperCase();
+
+            // Sanitize and derive the root module key path (safely handles any trailing extensions)
+            const cleanFileName = fileName.endsWith('.html') ? fileName.slice(0, -5) : fileName;
+            const moduleKey = category + '/' + cleanFileName;
+
+            // Assign destination file stream securely using custom transition rules
+            setTimeout(() => {
+                viewportIframe.removeAttribute('srcdoc');
+                viewportIframe.src = moduleKey + '.html';
+                loader.classList.add('hidden');
+                viewportIframe.classList.remove('hidden');
+            }, 600); // Sleek loading delay
+        }
+
+        /* -------------------------------------------------------------
+           5. CLOSE/RETURN MODULE FUNCTION
+        ------------------------------------------------------------- */
+        function closeModule() {
+            const ecuDashboard = document.getElementById('ecuDashboard');
+            const viewportIframe = document.getElementById('viewportIframe');
+            const headerTitle = document.getElementById('headerTitle');
+
+            headerTitle.textContent = "ECU LIVE TELEMETRY STREAM";
+            viewportIframe.classList.add('hidden');
+            viewportIframe.removeAttribute('src'); // Clear iframe buffer memory instead of srcdoc
+            ecuDashboard.classList.remove('hidden');
+
+            // Restart dynamic engine simulation 
+            clearInterval(simulationInterval);
+            simulationInterval = setInterval(runPowertrainEmulation, 20);
+        }
+    </script>
+</body>
+</html>
